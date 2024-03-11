@@ -1,0 +1,53 @@
+N = 5
+COMEN = 0
+HAMBRE = 1
+PIENSAN = 2
+
+Estado[N]
+phil[N] = {0, 1, 2, 3, 4}
+semaforo
+S[N]
+
+función Comer(fil_num):
+    si Estado[fil_num] == HAMBRE y Estado[IZQUIERDA] != COMEN y Estado[DERECHA] != COMEN entonces
+        Estado[fil_num] = COMEN
+        esperar(2)
+        imprimir "Filósofo " + (fil_num + 1) + " toma cubiertos(" + (IZQUIERDA + 1) + ", " + (fil_num + 1) + ")"
+        imprimir "Filósofo " + (fil_num + 1) + " está comiendo..."
+        liberar(S[fil_num])
+
+función tomar_Cubiertos(fil_num):
+    esperar(semaforo)
+    Estado[fil_num] = HAMBRE
+    imprimir "Filósofo " + (fil_num + 1) + " tiene hambre"
+    Comer(fil_num)
+    liberar(semaforo)
+    esperar(S[fil_num])
+    esperar(1)
+
+función DejarCubierto(fil_num):
+    esperar(semaforo)
+    Estado[fil_num] = PIENSAN
+    imprimir "Filósofo " + (fil_num + 1) + " deja cubiertos(" + (IZQUIERDA + 1) + ", " + (fil_num + 1) + ")"
+    imprimir "Filósofo " + (fil_num + 1) + " está pensando..."
+    Comer(IZQUIERDA)
+    Comer(DERECHA)
+    liberar(semaforo)
+
+función Filósofo(num):
+    mientras verdadero hacer
+        tomar_Cubiertos(num)
+        DejarCubierto(num)
+
+función principal():
+    inicializar(semaforo, 1)
+    para cada i en [0, N) hacer
+        inicializar(S[i], 0)
+
+    para cada i en [0, N) hacer
+        crear_hilo(Filósofo, phil[i])
+
+    para cada hilo en hilos hacer
+        esperar(hilo)
+
+principal()
